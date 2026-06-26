@@ -11,18 +11,7 @@
 
         <canvas id="gameCanvas" width="850" height="480"></canvas>
 
-        <button id="pause-trigger-btn" class="hidden">⏸ PAUSE</button>
-
-        <div id="progress-container" class="hidden">
-            <div class="progress-wrapper">
-                <div class="progress-label">SECTOR STREAM PROGRESSION</div>
-                <div class="progress-track level-track"><div id="progress-bar"></div></div>
-            </div>
-            <div class="progress-wrapper">
-                <div class="progress-label">SCORE LEVEL THRESHOLD</div>
-                <div class="progress-track score-track"><div id="score-bar"></div></div>
-            </div>
-        </div>
+        <button id="pause-trigger-btn" class="hidden">⏸</button>
 
         <div id="hud" class="hidden">
             <div class="hud-card">LVL: <span id="hud-level-val">1</span></div>
@@ -33,9 +22,18 @@
             <div class="hud-card color-shield">SHIELD: <span id="shield-val">READY</span></div>
         </div>
 
+        <div id="progress-container" class="hidden">
+            <div class="progress-wrapper">
+                <div class="progress-track level-track"><div id="progress-bar"></div></div>
+            </div>
+            <div class="progress-wrapper">
+                <div class="progress-track score-track"><div id="score-bar"></div></div>
+            </div>
+        </div>
+
         <div id="mobile-controls-container" class="hidden">
             <button id="m-btn-jump" class="mobile-action-btn">JUMP</button>
-            <button id="m-btn-shift" class="mobile-action-btn color-shift">SHIFT DIM</button>
+            <button id="m-btn-shift" class="mobile-action-btn color-shift">SHIFT</button>
             <button id="m-btn-shield" class="mobile-action-btn color-shield">SHIELD</button>
             <button id="m-btn-nitro" class="mobile-action-btn color-nitro">NITRO</button>
         </div>
@@ -109,35 +107,14 @@
                     <span class="key-badge">SPACEBAR</span>
                     <div class="control-detail">
                         <h4>GRAVITY REBOUND JUMP</h4>
-                        <p>Press once to leap. Press mid-air to execute a Double Jump. Crucial for clearing massive platform data streams.</p>
-                    </div>
-                </div>
-                <div class="control-card-row">
-                    <span class="key-badge">ESC / INTERFACE</span>
-                    <div class="control-detail">
-                        <h4>REAL-TIME PAUSE PROTOCOL</h4>
-                        <p>Instantly freezes state execution pipelines mid-run to recalculate strategy. Click Resume to re-enter loop seamlessly.</p>
+                        <p>Press once to leap. Press mid-air to execute a Double Jump.</p>
                     </div>
                 </div>
                 <div class="control-card-row">
                     <span class="key-badge">Q / E</span>
                     <div class="control-detail">
                         <h4>DIMENSIONAL SCHISM SHIFT</h4>
-                        <p>Toggles your state sync between **SKY MATRIX** and **VOID FRACTURE**. Obstacles only harm you if they match your dimension!</p>
-                    </div>
-                </div>
-                <div class="control-card-row">
-                    <span class="key-badge">SHIFT / MID-CLICK</span>
-                    <div class="control-detail">
-                        <h4>RIFT SHIELD INTEGRITY</h4>
-                        <p>Deploys a protective dome. You become completely invulnerable and atomize any solid structures into bonus points.</p>
-                    </div>
-                </div>
-                <div class="control-card-row">
-                    <span class="key-badge">F KEY</span>
-                    <div class="control-detail">
-                        <h4>NITRO DATA FLASH</h4>
-                        <p>Triggers a localized velocity burst, increasing speed by 200% instantly while rendering you immune to platform traps.</p>
+                        <p>Toggles your state sync between SKY MATRIX and VOID FRACTURE.</p>
                     </div>
                 </div>
             </div>
