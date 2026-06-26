@@ -1,5 +1,5 @@
 /**
- * VOID RUNNER : OP EDITION - Structural Stability Fixes
+ * VOID RUNNER : OP EDITION - Structural Stability Fixes & Mobile Controls
  */
 
 const canvas = document.getElementById("gameCanvas");
@@ -19,7 +19,6 @@ const progressContainer = document.getElementById("progress-container");
 const progressBar = document.getElementById("progress-bar");
 const scoreBar = document.getElementById("score-bar");
 const pauseTriggerBtn = document.getElementById("pause-trigger-btn");
-const mobileControlsContainer = document.getElementById("mobile-action-controls");
 
 const hudLevelVal = document.getElementById("hud-level-val");
 const scoreVal = document.getElementById("hud-score-val");
@@ -115,16 +114,17 @@ function switchUI(state) {
     hudContainer.classList.add("hidden"); 
     progressContainer.classList.add("hidden"); 
     pauseTriggerBtn.classList.add("hidden");
-    mobileControlsContainer.classList.add("hidden"); // Default hide layout
+    
+    const mControls = document.getElementById("mobile-controls-container");
+    if (mControls) mControls.classList.add("hidden");
 
     if (state === "PLAYING" || state === "PAUSE") { 
         hudContainer.classList.remove("hidden"); 
         progressContainer.classList.remove("hidden"); 
         pauseTriggerBtn.classList.remove("hidden"); 
         
-        // Only bring up action overlay pads if actively playing loop tracks
-        if (state === "PLAYING") {
-            mobileControlsContainer.classList.remove("hidden");
+        if (state === "PLAYING" && mControls) {
+            mControls.classList.remove("hidden");
         }
         
         if (state === "PAUSE") {
@@ -199,7 +199,12 @@ function triggerNitroDashBoost() {
 
 function togglePauseState() {
     if (currentGameState === "PLAYING") { currentGameState = "PAUSED"; switchUI("PAUSE"); } 
-    else if (currentGameState === "PAUSED") { currentGameState = "PLAYING"; viewScreens.pause.classList.remove("active"); viewScreens.pause.classList.add("hidden"); pauseTriggerBtn.classList.remove("hidden"); mobileControlsContainer.classList.remove("hidden"); }
+    else if (currentGameState === "PAUSED") { currentGameState = "PLAYING"; viewScreens.pause.classList.remove("active"); viewScreens.pause.classList.add("hidden"); pauseTriggerBtn.classList.remove("hidden"); const m = document.getElementById("mobile-controls-container"); if(m)m.classList.remove("hidden"); }
+}
+
+function handleJumpInput() {
+    if (player.isGrounded) { player.vy = player.jumpForce; } 
+    else if (player.doubleJumpAvailable) { player.vy = player.jumpForce * 0.85; player.doubleJumpAvailable = false; }
 }
 
 function update() {
@@ -366,16 +371,28 @@ function executeFatalCollapse() {
     scoreHighElement.innerText = highScore;
 }
 
-function handleJumpInput() {
-    if (player.isGrounded) { 
-        player.vy = player.jumpForce; 
-    } else if (player.doubleJumpAvailable) { 
-        player.vy = player.jumpForce * 0.85; 
-        player.doubleJumpAvailable = false; 
-    }
-}
+// Mobile Interface Touch Initialization Listeners
+document.getElementById("m-btn-jump").addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (currentGameState === "PLAYING") handleJumpInput();
+});
 
-// Keyboard Interface Controller
+document.getElementById("m-btn-shift").addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (currentGameState === "PLAYING") currentDimension = currentDimension === "SKY" ? "VOID" : "SKY";
+});
+
+document.getElementById("m-btn-shield").addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (currentGameState === "PLAYING") triggerShieldActivation();
+});
+
+document.getElementById("m-btn-nitro").addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (currentGameState === "PLAYING") triggerNitroDashBoost();
+});
+
+// Keyboard Hardware Event Engine Binding
 window.addEventListener("keydown", (e) => {
     if (e.code === "Escape") { e.preventDefault(); togglePauseState(); return; }
     if (currentGameState !== "PLAYING") return;
@@ -385,27 +402,7 @@ window.addEventListener("keydown", (e) => {
     if (e.code === "KeyF") triggerNitroDashBoost();
 });
 
-// --- NEW: Mobile Touch Event Listener Bindings for Virtual Gamepad Keys ---
-document.getElementById("m-jump-btn").addEventListener("touchstart", (e) => {
-    if (currentGameState === "PLAYING") { e.preventDefault(); handleJumpInput(); }
-}, { passive: false });
-
-document.getElementById("m-shift-btn").addEventListener("touchstart", (e) => {
-    if (currentGameState === "PLAYING") { e.preventDefault(); currentDimension = currentDimension === "SKY" ? "VOID" : "SKY"; }
-}, { passive: false });
-
-document.getElementById("m-shield-btn").addEventListener("touchstart", (e) => {
-    if (currentGameState === "PLAYING") { e.preventDefault(); triggerShieldActivation(); }
-}, { passive: false });
-
-document.getElementById("m-dash-btn").addEventListener("touchstart", (e) => {
-    if (currentGameState === "PLAYING") { e.preventDefault(); triggerNitroDashBoost(); }
-}, { passive: false });
-
-
-// =================================================================
-// SYSTEM INTERFACE EVENT CONTROLLER MATRIX
-// =================================================================
+// Structural Matrix Control Maps Links
 pauseTriggerBtn.onclick = () => togglePauseState();
 document.getElementById("resume-btn").onclick = () => togglePauseState();
 
