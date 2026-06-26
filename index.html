@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>VOID RUNNER : OP EDITION</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -12,13 +12,6 @@
         <canvas id="gameCanvas" width="850" height="480"></canvas>
 
         <button id="pause-trigger-btn" class="hidden">⏸ PAUSE</button>
-
-        <div id="mobile-action-controls" class="hidden">
-            <button id="m-jump-btn" class="m-btn m-btn-jump">JUMP</button>
-            <button id="m-shift-btn" class="m-btn m-btn-shift">SHRIFT DIM</button>
-            <button id="m-shield-btn" class="m-btn m-btn-shield">SHIELD</button>
-            <button id="m-dash-btn" class="m-btn m-btn-dash">NITRO</button>
-        </div>
 
         <div id="progress-container" class="hidden">
             <div class="progress-wrapper">
@@ -38,6 +31,13 @@
             <div class="hud-card color-neon">COMBO: <span id="combo-val">1x</span></div>
             <div class="hud-card" id="dimension-indicator">DIM: <span id="dim-val">SKY</span></div>
             <div class="hud-card color-shield">SHIELD: <span id="shield-val">READY</span></div>
+        </div>
+
+        <div id="mobile-controls-container" class="hidden">
+            <button id="m-btn-jump" class="mobile-action-btn">JUMP</button>
+            <button id="m-btn-shift" class="mobile-action-btn color-shift">SHIFT DIM</button>
+            <button id="m-btn-shield" class="mobile-action-btn color-shield">SHIELD</button>
+            <button id="m-btn-nitro" class="mobile-action-btn color-nitro">NITRO</button>
         </div>
 
         <div id="menu-screen" class="view-screen active">
