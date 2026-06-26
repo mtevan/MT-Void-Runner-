@@ -7,29 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="orientation-overlay">
-        <div class="orientation-content">
-            <div class="rotate-icon">🔄</div>
-            <h2 class="glitch" data-text="ROTATION REQUIRED">ROTATION REQUIRED</h2>
-            <p>Please rotate your device to <strong>Landscape Mode</strong> to interface with the core data streams.</p>
-        </div>
-    </div>
-
     <div id="game-container">
-        <canvas id="gameCanvas"></canvas>
+
+        <canvas id="gameCanvas" width="850" height="480"></canvas>
 
         <button id="pause-trigger-btn" class="hidden">⏸ PAUSE</button>
-
-        <div id="mobile-controls-layer" class="hidden">
-            <div class="mobile-btn-cluster left-cluster">
-                <button id="mobile-jump-btn" class="m-btn m-btn-blue">JUMP</button>
-                <button id="mobile-shift-btn" class="m-btn m-btn-pink">SHIFT DIM</button>
-            </div>
-            <div class="mobile-btn-cluster right-cluster">
-                <button id="mobile-shield-btn" class="m-btn m-btn-yellow">SHIELD</button>
-                <button id="mobile-dash-btn" class="m-btn m-btn-green">DASH</button>
-            </div>
-        </div>
 
         <div id="progress-container" class="hidden">
             <div class="progress-wrapper">

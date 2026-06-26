@@ -1,21 +1,9 @@
 /**
- * VOID RUNNER : OP EDITION - Structural Stability & Mobile Fixes
+ * VOID RUNNER : OP EDITION - Structural Stability Fixes
  */
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-// Automatically sync internal rendering coordinates with actual CSS scaling dimensions
-function resizeCanvasToDisplaySize() {
-    const rect = canvas.getBoundingClientRect();
-    if (canvas.width !== rect.width || canvas.height !== rect.height) {
-        canvas.width = rect.width || 850;
-        canvas.height = rect.height || 480;
-    }
-}
-
-// Fire once immediately and link it to window resize adjustments
-resizeCanvasToDisplaySize();
-window.addEventListener('resize', resizeCanvasToDisplaySize);
 
 const viewScreens = {
     menu: document.getElementById("menu-screen"),
@@ -31,7 +19,6 @@ const progressContainer = document.getElementById("progress-container");
 const progressBar = document.getElementById("progress-bar");
 const scoreBar = document.getElementById("score-bar");
 const pauseTriggerBtn = document.getElementById("pause-trigger-btn");
-const mobileControlsLayer = document.getElementById("mobile-controls-layer");
 
 const hudLevelVal = document.getElementById("hud-level-val");
 const scoreVal = document.getElementById("hud-score-val");
@@ -119,32 +106,30 @@ class Particle {
 }
 
 function switchUI(state) {
+    // 1. Cleanly hide all interactive overlay view screen layers first
     Object.keys(viewScreens).forEach(k => {
         viewScreens[k].classList.remove("active");
         viewScreens[k].classList.add("hidden");
     });
     
+    // 2. Hide HUD items by default across static configuration screens
     hudContainer.classList.add("hidden"); 
     progressContainer.classList.add("hidden"); 
     pauseTriggerBtn.classList.add("hidden");
-    mobileControlsLayer.classList.add("hidden");
 
+    // 3. Keep HUD visible during active gameplay sessions or pause states
     if (state === "PLAYING" || state === "PAUSE") { 
         hudContainer.classList.remove("hidden"); 
         progressContainer.classList.remove("hidden"); 
         pauseTriggerBtn.classList.remove("hidden"); 
         
-        // Show touch controls overlay on mobile devices during play
-        if (window.innerWidth <= 1024) {
-            mobileControlsLayer.classList.remove("hidden");
-        }
-        
+        // Show pause modal overlay explicitly if state is set to PAUSE
         if (state === "PAUSE") {
             viewScreens.pause.classList.remove("hidden");
             viewScreens.pause.classList.add("active");
-            mobileControlsLayer.classList.add("hidden"); // Hide buttons when suspended
         }
     } else {
+        // Handle all other navigation views (MENU, SHOP, GAMEOVER, etc.)
         const selectedView = viewScreens[state.toLowerCase()];
         if(selectedView) {
             selectedView.classList.remove("hidden"); 
@@ -212,16 +197,7 @@ function triggerNitroDashBoost() {
 
 function togglePauseState() {
     if (currentGameState === "PLAYING") { currentGameState = "PAUSED"; switchUI("PAUSE"); } 
-    else if (currentGameState === "PAUSED") { currentGameState = "PLAYING"; viewScreens.pause.classList.remove("active"); viewScreens.pause.classList.add("hidden"); pauseTriggerBtn.classList.remove("hidden"); if(window.innerWidth <= 1024) mobileControlsLayer.classList.remove("hidden"); }
-}
-
-function executeJumpAction() {
-    if (player.isGrounded) { player.vy = player.jumpForce; } 
-    else if (player.doubleJumpAvailable) { player.vy = player.jumpForce * 0.85; player.doubleJumpAvailable = false; }
-}
-
-function executeDimensionToggle() {
-    currentDimension = currentDimension === "SKY" ? "VOID" : "SKY";
+    else if (currentGameState === "PAUSED") { currentGameState = "PLAYING"; viewScreens.pause.classList.remove("active"); viewScreens.pause.classList.add("hidden"); pauseTriggerBtn.classList.remove("hidden"); }
 }
 
 function update() {
@@ -304,18 +280,19 @@ function update() {
                 dimension: Math.random() < 0.5 ? "SKY" : "VOID", shape: OBSTACLE_SHAPES[Math.floor(Math.random() * 3)], passed: false
             });
         }
+        // MODIFIED: High-yield Shard Cluster Spawning Matrix
         if (Math.random() < 0.95) { 
              for (let i = 0; i < 3; i++) {
-             crystalShards.push({ 
-                 x: lastPlatform.x + lastPlatform.width + gap + (nextW * 0.4) + (i * 35), 
-                 y: nextY - 35, 
-                 width: 14, 
-                 height: 18, 
-                 picked: false 
-             });
+                 crystalShards.push({ 
+                     x: lastPlatform.x + lastPlatform.width + gap + (nextW * 0.4) + (i * 35), 
+                     y: nextY - 35, 
+                     width: 14, 
+                     height: 18, 
+                     picked: false 
+                 });
+             }
         }
     }
-}
 
     particles.forEach(p => p.update()); particles = particles.filter(p => p.alpha > 0);
     if (player.y > canvas.height + 40) executeFatalCollapse();
@@ -388,31 +365,45 @@ function executeFatalCollapse() {
     scoreHighElement.innerText = highScore;
 }
 
+// Keyboard Interface Controller
 window.addEventListener("keydown", (e) => {
     if (e.code === "Escape") { e.preventDefault(); togglePauseState(); return; }
     if (currentGameState !== "PLAYING") return;
-    if (e.code === "Space") { e.preventDefault(); executeJumpAction(); }
-    if (e.code === "KeyQ" || e.code === "KeyE") executeDimensionToggle();
+    if (e.code === "Space") {
+        e.preventDefault();
+        handleJumpInput();
+    }
+    if (e.code === "KeyQ" || e.code === "KeyE") currentDimension = currentDimension === "SKY" ? "VOID" : "SKY";
     if (e.code === "ShiftLeft" || e.code === "ShiftRight") triggerShieldActivation();
     if (e.code === "KeyF") triggerNitroDashBoost();
 });
 
-// =================================================================
-// MOBILE PLATFORM INTERACTION PAD BINDINGS
-// =================================================================
-document.getElementById("mobile-jump-btn").addEventListener("touchstart", (e) => { e.preventDefault(); executeJumpAction(); });
-document.getElementById("mobile-shift-btn").addEventListener("touchstart", (e) => { e.preventDefault(); executeDimensionToggle(); });
-document.getElementById("mobile-shield-btn").addEventListener("touchstart", (e) => { e.preventDefault(); triggerShieldActivation(); });
-document.getElementById("mobile-dash-btn").addEventListener("touchstart", (e) => { e.preventDefault(); triggerNitroDashBoost(); });
+// Mobile Layout Touch Tap Jump Controller Input Link
+canvas.addEventListener("touchstart", (e) => {
+    if (currentGameState === "PLAYING") {
+        e.preventDefault();
+        handleJumpInput();
+    }
+}, { passive: false });
 
+function handleJumpInput() {
+    if (player.isGrounded) { 
+        player.vy = player.jumpForce; 
+    } else if (player.doubleJumpAvailable) { 
+        player.vy = player.jumpForce * 0.85; 
+        player.doubleJumpAvailable = false; 
+    }
+}
 
 // =================================================================
 // SYSTEM INTERFACE EVENT CONTROLLER MATRIX
 // =================================================================
 
+// On-Screen Pause Toggle Hooks
 pauseTriggerBtn.onclick = () => togglePauseState();
 document.getElementById("resume-btn").onclick = () => togglePauseState();
 
+// Menu Transition Restores
 document.getElementById("pause-exit-btn").onclick = () => { 
     currentGameState = "MENU"; 
     switchUI("MENU"); 
@@ -439,6 +430,7 @@ document.getElementById("retry-btn").onclick = () => { initGame(); currentGameSt
 document.getElementById("shop-btn").onclick = () => { updateHUDDisplays(); switchUI("SHOP"); };
 document.getElementById("shop-back-btn").onclick = () => switchUI("MENU");
 
+// Interface Termination Link
 document.getElementById("exit-terminate-btn").onclick = () => {
     window.close();
     window.location.href = "about:blank";

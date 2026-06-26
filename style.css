@@ -12,13 +12,17 @@ body {
     font-family: 'Courier New', Courier, monospace; color: #fff;
     display: flex; justify-content: center; align-items: center;
     height: 100vh; overflow: hidden; user-select: none;
-    -webkit-touch-callout: none;
 }
 
 #game-container {
-    position: relative; width: 850px; height: 480px;
-    border: 3px solid var(--neon-blue); box-shadow: var(--border-glow);
+    position: relative; 
+    width: 100%;
+    max-width: 850px;
+    aspect-ratio: 850 / 480;
+    border: 3px solid var(--neon-blue); 
+    box-shadow: var(--border-glow);
     background-color: var(--bg-dark);
+    margin: 0 auto;
 }
 
 canvas { display: block; width: 100%; height: 100%; }
@@ -99,6 +103,8 @@ h1 { font-size: 3.2rem; margin: 0; letter-spacing: 4px; color: var(--neon-blue);
 /* Component Global Modifiers */
 .btn { background: rgba(0,0,0,0.6); color: #fff; border: 2px solid var(--neon-blue); padding: 10px 20px; font-family: inherit; font-size: 0.9rem; cursor: pointer; font-weight: bold; transition: all 0.2s ease; }
 .btn:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 12px var(--neon-blue); }
+.btn:active { transform: scale(0.96); } /* Corrected from active-transform */
+
 .btn-primary { border-color: var(--neon-green); color: var(--neon-green); }
 .btn-primary:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 12px var(--neon-green); }
 .btn-avatar { border-color: #ffea00; color: #ffea00; }
@@ -116,55 +122,18 @@ h1 { font-size: 3.2rem; margin: 0; letter-spacing: 4px; color: var(--neon-blue);
 .btn-exit { border-color: #ff3333; color: #ff3333; }
 .btn-exit:hover { background: #ff3333; color: #fff; box-shadow: 0 0 15px #ff3333; }
 
-/* =================================================================
-   MOBILE PLATFORM INTERFACE LAYERS (NEW)
-   ================================================================= */
-
-/* Dynamic Orientation Block Shield Overlay */
-#orientation-overlay {
-    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: #020510; z-index: 99999; flex-direction: column;
-    justify-content: center; align-items: center; text-align: center; box-sizing: border-box; padding: 30px;
-}
-.rotate-icon { font-size: 4rem; margin-bottom: 20px; animation: spin 2.5s infinite linear; }
-#orientation-overlay p { font-size: 0.95rem; color: #8b9bb4; max-width: 400px; line-height: 1.6; }
-
-@keyframes spin { 100% { transform: rotate(-360deg); } }
-
-/* Mobile Aspect Fluid Adaptation Matrix */
-@media screen and (max-width: 1024px) {
-    #game-container { width: 100vw; height: 100vh; max-width: none; max-height: none; border: none; }
-    body { padding: 0; margin: 0; }
-    h1 { font-size: 2.2rem; }
-    .subtitle { margin-bottom: 15px; font-size: 0.9rem; }
-    .main-menu-layout .btn { font-size: 0.75rem; padding: 8px 12px; }
-    #hud { top: 10px; left: 10px; right: 10px; flex-wrap: wrap; gap: 4px; }
+/* Handheld Adaptive Mobile Constraints Patch */
+@media (max-width: 860px) {
+    h1 { font-size: 1.8rem; }
+    .subtitle { font-size: 0.8rem; margin-bottom: 12px; }
+    #hud { top: 5px; left: 5px; right: 5px; gap: 4px; flex-wrap: wrap; }
     .hud-card { padding: 4px 6px; font-size: 0.65rem; }
-    #pause-trigger-btn { top: 68px; right: 10px; padding: 3px 8px; font-size: 0.65rem; }
-    #progress-container { bottom: 85px; } /* Raise to make room for mobile pads */
+    #pause-trigger-btn { top: 55px; right: 5px; padding: 3px 8px; font-size: 0.6rem; }
+    .btn { padding: 6px 12px; font-size: 0.75rem; }
+    #levels-grid-container { grid-template-columns: repeat(5, 1fr); max-height: 110px; }
+    #avatar-grid-container { grid-template-columns: repeat(3, 1fr); max-height: 120px; }
+    .shop-grid { flex-direction: column; gap: 8px; max-height: 140px; overflow-y: auto; }
+    .shop-item p { display: none; }
+    .controls-layout-container { max-height: 140px; padding: 5px; }
+    .key-badge { min-width: 80px; padding: 3px; font-size: 0.7rem; }
 }
-
-/* Force Orientation Overlay when Device is Taller than Wide */
-@media screen and (max-aspect-ratio: 13/9) and (max-width: 1024px) {
-    #orientation-overlay { display: flex; }
-}
-
-/* Floating Action Touch Control Panels */
-#mobile-controls-layer {
-    position: absolute; bottom: 10px; left: 0; width: 100%;
-    display: flex; justify-content: space-between; box-sizing: border-box;
-    padding: 0 20px; z-index: 8; pointer-events: none;
-}
-.mobile-btn-cluster { display: flex; gap: 15px; pointer-events: auto; }
-.m-btn {
-    width: 75px; height: 60px; border-radius: 8px; background: rgba(0, 0, 0, 0.6);
-    font-family: inherit; font-size: 0.75rem; font-weight: bold; text-align: center;
-    border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    transform: scale(0.92); transition: transform 0.05s ease;
-}
-.m-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
-
-.m-btn-blue { border-color: var(--neon-blue); color: var(--neon-blue); }
-.m-btn-pink { border-color: var(--neon-pink); color: var(--neon-pink); }
-.m-btn-yellow { border-color: #ffea00; color: #ffea00; }
-.m-btn-green { border-color: var(--neon-green); color: var(--neon-green); }
