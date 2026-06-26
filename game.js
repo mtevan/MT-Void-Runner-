@@ -19,6 +19,7 @@ const progressContainer = document.getElementById("progress-container");
 const progressBar = document.getElementById("progress-bar");
 const scoreBar = document.getElementById("score-bar");
 const pauseTriggerBtn = document.getElementById("pause-trigger-btn");
+const mobileControlsContainer = document.getElementById("mobile-action-controls");
 
 const hudLevelVal = document.getElementById("hud-level-val");
 const scoreVal = document.getElementById("hud-score-val");
@@ -106,30 +107,31 @@ class Particle {
 }
 
 function switchUI(state) {
-    // 1. Cleanly hide all interactive overlay view screen layers first
     Object.keys(viewScreens).forEach(k => {
         viewScreens[k].classList.remove("active");
         viewScreens[k].classList.add("hidden");
     });
     
-    // 2. Hide HUD items by default across static configuration screens
     hudContainer.classList.add("hidden"); 
     progressContainer.classList.add("hidden"); 
     pauseTriggerBtn.classList.add("hidden");
+    mobileControlsContainer.classList.add("hidden"); // Default hide layout
 
-    // 3. Keep HUD visible during active gameplay sessions or pause states
     if (state === "PLAYING" || state === "PAUSE") { 
         hudContainer.classList.remove("hidden"); 
         progressContainer.classList.remove("hidden"); 
         pauseTriggerBtn.classList.remove("hidden"); 
         
-        // Show pause modal overlay explicitly if state is set to PAUSE
+        // Only bring up action overlay pads if actively playing loop tracks
+        if (state === "PLAYING") {
+            mobileControlsContainer.classList.remove("hidden");
+        }
+        
         if (state === "PAUSE") {
             viewScreens.pause.classList.remove("hidden");
             viewScreens.pause.classList.add("active");
         }
     } else {
-        // Handle all other navigation views (MENU, SHOP, GAMEOVER, etc.)
         const selectedView = viewScreens[state.toLowerCase()];
         if(selectedView) {
             selectedView.classList.remove("hidden"); 
@@ -197,7 +199,7 @@ function triggerNitroDashBoost() {
 
 function togglePauseState() {
     if (currentGameState === "PLAYING") { currentGameState = "PAUSED"; switchUI("PAUSE"); } 
-    else if (currentGameState === "PAUSED") { currentGameState = "PLAYING"; viewScreens.pause.classList.remove("active"); viewScreens.pause.classList.add("hidden"); pauseTriggerBtn.classList.remove("hidden"); }
+    else if (currentGameState === "PAUSED") { currentGameState = "PLAYING"; viewScreens.pause.classList.remove("active"); viewScreens.pause.classList.add("hidden"); pauseTriggerBtn.classList.remove("hidden"); mobileControlsContainer.classList.remove("hidden"); }
 }
 
 function update() {
@@ -280,7 +282,6 @@ function update() {
                 dimension: Math.random() < 0.5 ? "SKY" : "VOID", shape: OBSTACLE_SHAPES[Math.floor(Math.random() * 3)], passed: false
             });
         }
-        // MODIFIED: High-yield Shard Cluster Spawning Matrix
         if (Math.random() < 0.95) { 
              for (let i = 0; i < 3; i++) {
                  crystalShards.push({ 
@@ -365,27 +366,6 @@ function executeFatalCollapse() {
     scoreHighElement.innerText = highScore;
 }
 
-// Keyboard Interface Controller
-window.addEventListener("keydown", (e) => {
-    if (e.code === "Escape") { e.preventDefault(); togglePauseState(); return; }
-    if (currentGameState !== "PLAYING") return;
-    if (e.code === "Space") {
-        e.preventDefault();
-        handleJumpInput();
-    }
-    if (e.code === "KeyQ" || e.code === "KeyE") currentDimension = currentDimension === "SKY" ? "VOID" : "SKY";
-    if (e.code === "ShiftLeft" || e.code === "ShiftRight") triggerShieldActivation();
-    if (e.code === "KeyF") triggerNitroDashBoost();
-});
-
-// Mobile Layout Touch Tap Jump Controller Input Link
-canvas.addEventListener("touchstart", (e) => {
-    if (currentGameState === "PLAYING") {
-        e.preventDefault();
-        handleJumpInput();
-    }
-}, { passive: false });
-
 function handleJumpInput() {
     if (player.isGrounded) { 
         player.vy = player.jumpForce; 
@@ -395,31 +375,44 @@ function handleJumpInput() {
     }
 }
 
+// Keyboard Interface Controller
+window.addEventListener("keydown", (e) => {
+    if (e.code === "Escape") { e.preventDefault(); togglePauseState(); return; }
+    if (currentGameState !== "PLAYING") return;
+    if (e.code === "Space") { e.preventDefault(); handleJumpInput(); }
+    if (e.code === "KeyQ" || e.code === "KeyE") currentDimension = currentDimension === "SKY" ? "VOID" : "SKY";
+    if (e.code === "ShiftLeft" || e.code === "ShiftRight") triggerShieldActivation();
+    if (e.code === "KeyF") triggerNitroDashBoost();
+});
+
+// --- NEW: Mobile Touch Event Listener Bindings for Virtual Gamepad Keys ---
+document.getElementById("m-jump-btn").addEventListener("touchstart", (e) => {
+    if (currentGameState === "PLAYING") { e.preventDefault(); handleJumpInput(); }
+}, { passive: false });
+
+document.getElementById("m-shift-btn").addEventListener("touchstart", (e) => {
+    if (currentGameState === "PLAYING") { e.preventDefault(); currentDimension = currentDimension === "SKY" ? "VOID" : "SKY"; }
+}, { passive: false });
+
+document.getElementById("m-shield-btn").addEventListener("touchstart", (e) => {
+    if (currentGameState === "PLAYING") { e.preventDefault(); triggerShieldActivation(); }
+}, { passive: false });
+
+document.getElementById("m-dash-btn").addEventListener("touchstart", (e) => {
+    if (currentGameState === "PLAYING") { e.preventDefault(); triggerNitroDashBoost(); }
+}, { passive: false });
+
+
 // =================================================================
 // SYSTEM INTERFACE EVENT CONTROLLER MATRIX
 // =================================================================
-
-// On-Screen Pause Toggle Hooks
 pauseTriggerBtn.onclick = () => togglePauseState();
 document.getElementById("resume-btn").onclick = () => togglePauseState();
 
-// Menu Transition Restores
-document.getElementById("pause-exit-btn").onclick = () => { 
-    currentGameState = "MENU"; 
-    switchUI("MENU"); 
-};
+document.getElementById("pause-exit-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
+document.getElementById("gameover-menu-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
+document.getElementById("avatar-back-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
 
-document.getElementById("gameover-menu-btn").onclick = () => { 
-    currentGameState = "MENU"; 
-    switchUI("MENU"); 
-};
-
-document.getElementById("avatar-back-btn").onclick = () => {
-    currentGameState = "MENU";
-    switchUI("MENU");
-};
-
-// Core Flow Routes
 document.getElementById("play-btn").onclick = () => { initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
 document.getElementById("char-select-btn").onclick = () => { renderBuildAvatarGrid(); switchUI("AVATAR"); };
 document.getElementById("levels-btn").onclick = () => { renderBuildLevelsMatrixGrid(); switchUI("LEVELS"); };
@@ -430,13 +423,11 @@ document.getElementById("retry-btn").onclick = () => { initGame(); currentGameSt
 document.getElementById("shop-btn").onclick = () => { updateHUDDisplays(); switchUI("SHOP"); };
 document.getElementById("shop-back-btn").onclick = () => switchUI("MENU");
 
-// Interface Termination Link
 document.getElementById("exit-terminate-btn").onclick = () => {
     window.close();
     window.location.href = "about:blank";
 };
 
-// Shop Stat Upgrade Module Updaters
 document.getElementById("up-shield-btn").onclick = () => {
     if (totalSavedShards >= 1000) { totalSavedShards -= 1000; coreUpgrades.shieldDur += 1; localStorage.setItem("vrop_upgrades", JSON.stringify(coreUpgrades)); localStorage.setItem("vrop_shards", totalSavedShards); updateHUDDisplays(); } else { throwShopAlert(); }
 };
@@ -447,7 +438,6 @@ document.getElementById("up-dash-btn").onclick = () => {
     if (totalSavedShards >= 2000) { totalSavedShards -= 2000; coreUpgrades.dashCDReduction += 1; localStorage.setItem("vrop_upgrades", JSON.stringify(coreUpgrades)); localStorage.setItem("vrop_shards", totalSavedShards); updateHUDDisplays(); } else { throwShopAlert(); }
 };
 
-// Main Loop Frame Initializer Call
 function runGlobalFrameTickLoop() {
     if (currentGameState === "PLAYING") update();
     draw(); 
