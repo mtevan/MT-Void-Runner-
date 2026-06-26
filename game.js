@@ -4,6 +4,18 @@
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+// Automatically sync internal rendering coordinates with actual CSS scaling dimensions
+function resizeCanvasToDisplaySize() {
+    const rect = canvas.getBoundingClientRect();
+    if (canvas.width !== rect.width || canvas.height !== rect.height) {
+        canvas.width = rect.width || 850;
+        canvas.height = rect.height || 480;
+    }
+}
+
+// Fire once immediately and link it to window resize adjustments
+resizeCanvasToDisplaySize();
+window.addEventListener('resize', resizeCanvasToDisplaySize);
 
 const viewScreens = {
     menu: document.getElementById("menu-screen"),
