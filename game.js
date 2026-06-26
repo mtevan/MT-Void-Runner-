@@ -1,5 +1,5 @@
 /**
- * VOID RUNNER : OP EDITION - Structural Stability Fixes & Mobile Controls
+ * VOID RUNNER : OP EDITION - Structural Stability Fixes
  */
 
 const canvas = document.getElementById("gameCanvas");
