@@ -35,6 +35,24 @@ canvas { display: block; width: 100%; height: 100%; }
 }
 #pause-trigger-btn:hover { background: var(--neon-pink); color: #fff; }
 
+/* --- Mobile Virtual Gamepad Interface Engine --- */
+#mobile-action-controls {
+    position: absolute; bottom: 35px; left: 0; width: 100%;
+    display: flex; justify-content: space-between; padding: 0 20px;
+    box-sizing: border-box; z-index: 8; pointer-events: none;
+}
+.m-btn {
+    pointer-events: auto; background: rgba(6, 10, 26, 0.65);
+    color: #fff; font-family: inherit; font-weight: bold; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5); opacity: 0.85; width: 60px; height: 60px; font-size: 0.65rem; text-align: center;
+}
+.m-btn:active { transform: scale(0.9); opacity: 1; }
+.m-btn-jump { border: 2px solid #fff; order: 1; width: 70px; height: 70px; font-size: 0.8rem; background: rgba(255,255,255,0.15); }
+.m-btn-shift { border: 2px solid var(--neon-blue); order: 2; }
+.m-btn-shield { border: 2px solid #ffea00; order: 3; }
+.m-btn-dash { border: 2px solid var(--neon-green); order: 4; }
+
 .view-screen {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(2, 3, 8, 0.96); display: flex; flex-direction: column;
@@ -103,7 +121,7 @@ h1 { font-size: 3.2rem; margin: 0; letter-spacing: 4px; color: var(--neon-blue);
 /* Component Global Modifiers */
 .btn { background: rgba(0,0,0,0.6); color: #fff; border: 2px solid var(--neon-blue); padding: 10px 20px; font-family: inherit; font-size: 0.9rem; cursor: pointer; font-weight: bold; transition: all 0.2s ease; }
 .btn:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 12px var(--neon-blue); }
-.btn:active { transform: scale(0.96); } /* Corrected from active-transform */
+.btn:active { transform: scale(0.96); }
 
 .btn-primary { border-color: var(--neon-green); color: var(--neon-green); }
 .btn-primary:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 12px var(--neon-green); }
@@ -136,4 +154,8 @@ h1 { font-size: 3.2rem; margin: 0; letter-spacing: 4px; color: var(--neon-blue);
     .shop-item p { display: none; }
     .controls-layout-container { max-height: 140px; padding: 5px; }
     .key-badge { min-width: 80px; padding: 3px; font-size: 0.7rem; }
+    
+    /* Make the mobile buttons display cleanly on screens less than 860px wide */
+    #mobile-action-controls { display: flex !important; }
+    #progress-container { bottom: 115px; } /* Move progress bars slightly higher so buttons don't block them */
 }
