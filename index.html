@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VOID RUNNER : OP EDITION</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="orientation-overlay">
+        <div class="orientation-content">
+            <div class="rotate-icon">🔄</div>
+            <h2 class="glitch" data-text="ROTATION REQUIRED">ROTATION REQUIRED</h2>
+            <p>Please rotate your device to <strong>Landscape Mode</strong> to interface with the core data streams.</p>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <canvas id="gameCanvas" width="850" height="480"></canvas>
+
+        <button id="pause-trigger-btn" class="hidden">⏸ PAUSE</button>
+
+        <div id="mobile-controls-layer" class="hidden">
+            <div class="mobile-btn-cluster left-cluster">
+                <button id="mobile-jump-btn" class="m-btn m-btn-blue">JUMP</button>
+                <button id="mobile-shift-btn" class="m-btn m-btn-pink">SHIFT DIM</button>
+            </div>
+            <div class="mobile-btn-cluster right-cluster">
+                <button id="mobile-shield-btn" class="m-btn m-btn-yellow">SHIELD</button>
+                <button id="mobile-dash-btn" class="m-btn m-btn-green">DASH</button>
+            </div>
+        </div>
+
+        <div id="progress-container" class="hidden">
+            <div class="progress-wrapper">
+                <div class="progress-label">SECTOR STREAM PROGRESSION</div>
+                <div class="progress-track level-track"><div id="progress-bar"></div></div>
+            </div>
+            <div class="progress-wrapper">
+                <div class="progress-label">SCORE LEVEL THRESHOLD</div>
+                <div class="progress-track score-track"><div id="score-bar"></div></div>
+            </div>
+        </div>
+
+        <div id="hud" class="hidden">
+            <div class="hud-card">LVL: <span id="hud-level-val">1</span></div>
+            <div class="hud-card">SCORE: <span id="hud-score-val">0</span></div>
+            <div class="hud-card color-shard">SHARDS: <span id="hud-shards-val">0</span> (<span id="hud-shard-rate">0</span>/m)</div>
+            <div class="hud-card color-neon">COMBO: <span id="combo-val">1x</span></div>
+            <div class="hud-card" id="dimension-indicator">DIM: <span id="dim-val">SKY</span></div>
+            <div class="hud-card color-shield">SHIELD: <span id="shield-val">READY</span></div>
+        </div>
+
+        <div id="menu-screen" class="view-screen active">
+            <h1 class="glitch" data-text="VOID RUNNER">VOID RUNNER</h1>
+            <h2 class="subtitle">OP EDITION</h2>
+            <div class="btn-group main-menu-layout">
+                <button id="play-btn" class="btn btn-primary">LAUNCH RUN</button>
+                <button id="char-select-btn" class="btn btn-avatar">SELECT AVATAR MATRIX</button>
+                <button id="levels-btn" class="btn">SECTOR SELECT (1-200)</button>
+                <button id="shop-btn" class="btn btn-neon">STAT UPGRADE SHOP</button>
+                <button id="controls-btn" class="btn">CONTROLS & HOW TO PLAY</button>
+                <button id="exit-terminate-btn" class="btn btn-exit">TERMINATE INTERFACE</button>
+            </div>
+        </div>
+
+        <div id="avatar-screen" class="view-screen hidden">
+            <h2>SELECT AVATAR IDENTITY MATRIX</h2>
+            <div id="avatar-grid-container"></div>
+            <button id="avatar-back-btn" class="btn btn-back">CONFIRM & RE-ROUTE</button>
+        </div>
+
+        <div id="levels-screen" class="view-screen hidden">
+            <h2>SELECT DESIRED SECTOR</h2>
+            <div id="levels-grid-container"></div>
+            <button id="levels-back-btn" class="btn btn-back">BACK TO CORE</button>
+        </div>
+
+        <div id="shop-screen" class="view-screen hidden">
+            <h2>UPGRADE MATRIX CORE</h2>
+            <div class="currency-display">AVAILABLE SHARDS: <span id="shop-currency-val">0</span></div>
+            <div id="shop-alert" class="alert-msg hidden">INSUFFICIENT SHARDS FOR UPGRADE</div>
+            
+            <div class="shop-grid">
+                <div class="shop-item">
+                    <h3>RIFT SHIELD DURATION</h3>
+                    <div class="stat-level">Tier: <span id="shield-tier">0</span></div>
+                    <p>Extends invulnerability window when smashing obstacle clusters.</p>
+                    <button id="up-shield-btn" class="btn btn-shop">Upgrade (1000 Shards)</button>
+                </div>
+                <div class="shop-item">
+                    <h3>PHASE WINDOW</h3>
+                    <div class="stat-level">Tier: <span id="phase-tier">0</span></div>
+                    <p>Provides deep-buffer frames when swapping alternative realities.</p>
+                    <button id="up-phase-btn" class="btn btn-shop">Upgrade (1500 Shards)</button>
+                </div>
+                <div class="shop-item">
+                    <h3>DASH RECOVERY</h3>
+                    <div class="stat-level">Tier: <span id="dash-tier">0</span></div>
+                    <p>Compresses data loop latency to trigger infinite dashing speeds.</p>
+                    <button id="up-dash-btn" class="btn btn-shop">Upgrade (2000 Shards)</button>
+                </div>
+            </div>
+            <button id="shop-back-btn" class="btn btn-back">RETURN TO MENU</button>
+        </div>
+
+        <div id="pause-screen" class="view-screen hidden">
+            <h1 style="color: #ffea00; text-shadow: 0 0 15px #ffea00;">RUN SUSPENDED</h1>
+            <p class="subtitle">System state currently buffered in memory pipeline.</p>
+            <div class="btn-group">
+                <button id="resume-btn" class="btn btn-primary">RESUME OPERATION [ESC]</button>
+                <button id="pause-exit-btn" class="btn btn-back">ABORT RUN PROTOCOL</button>
+            </div>
+        </div>
+
+        <div id="controls-screen" class="view-screen hidden">
+            <h2>TACTICAL SCHEMATICS & MECHANICS</h2>
+            <div class="controls-layout-container">
+                <div class="control-card-row">
+                    <span class="key-badge">SPACEBAR</span>
+                    <div class="control-detail">
+                        <h4>GRAVITY REBOUND JUMP</h4>
+                        <p>Press once to leap. Press mid-air to execute a Double Jump. Crucial for clearing massive platform data streams.</p>
+                    </div>
+                </div>
+                <div class="control-card-row">
+                    <span class="key-badge">ESC / INTERFACE</span>
+                    <div class="control-detail">
+                        <h4>REAL-TIME PAUSE PROTOCOL</h4>
+                        <p>Instantly freezes state execution pipelines mid-run to recalculate strategy. Click Resume to re-enter loop seamlessly.</p>
+                    </div>
+                </div>
+                <div class="control-card-row">
+                    <span class="key-badge">Q / E</span>
+                    <div class="control-detail">
+                        <h4>DIMENSIONAL SCHISM SHIFT</h4>
+                        <p>Toggles your state sync between **SKY MATRIX** and **VOID FRACTURE**. Obstacles only harm you if they match your dimension!</p>
+                    </div>
+                </div>
+                <div class="control-card-row">
+                    <span class="key-badge">SHIFT / MID-CLICK</span>
+                    <div class="control-detail">
+                        <h4>RIFT SHIELD INTEGRITY</h4>
+                        <p>Deploys a protective dome. You become completely invulnerable and atomize any solid structures into bonus points.</p>
+                    </div>
+                </div>
+                <div class="control-card-row">
+                    <span class="key-badge">F KEY</span>
+                    <div class="control-detail">
+                        <h4>NITRO DATA FLASH</h4>
+                        <p>Triggers a localized velocity burst, increasing speed by 200% instantly while rendering you immune to platform traps.</p>
+                    </div>
+                </div>
+            </div>
+            <button id="controls-back-btn" class="btn btn-back">SYSTEM READY</button>
+        </div>
+
+        <div id="gameover-screen" class="view-screen hidden">
+            <h1 id="completion-title">MATRIX COLLAPSE</h1>
+            <p id="completion-subtitle">Your data stream completely vaporized.</p>
+            <div class="stats-box">
+                <p>FINAL SCORE: <span id="final-score">0</span></p>
+                <p>MAX COMBO: <span id="final-combo">1x</span></p>
+                <p>RECORD HIGH: <span id="high-score-val">0</span></p>
+            </div>
+            <div class="btn-group">
+                <button id="retry-btn" class="btn btn-primary">REBOOT RUN</button>
+                <button id="gameover-menu-btn" class="btn">EXIT PROTOCOL</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
