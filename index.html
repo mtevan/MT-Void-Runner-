@@ -45,6 +45,7 @@
             </div>
         </div>
 
+        <!-- Menu Screen with Support & Info Button -->
         <div id="menu-screen" class="view-screen active">
             <h1 class="glitch" data-text="VOID RUNNER">VOID RUNNER</h1>
             <h2 class="subtitle">OP EDITION</h2>
@@ -54,6 +55,7 @@
                 <button id="levels-btn" class="btn">SECTOR SELECT (1-200)</button>
                 <button id="shop-btn" class="btn btn-neon">STAT UPGRADE SHOP</button>
                 <button id="controls-btn" class="btn">CONTROLS & HOW TO PLAY</button>
+                <button id="info-btn" class="btn btn-info">SUPPORT & CREDITS</button>
                 <button id="exit-terminate-btn" class="btn btn-exit">TERMINATE INTERFACE</button>
             </div>
         </div>
@@ -147,6 +149,37 @@
                 </div>
             </div>
             <button id="controls-back-btn" class="btn btn-back">SYSTEM READY</button>
+        </div>
+
+        <!-- Customized Support & Info Screen Modal -->
+        <div id="info-screen" class="view-screen hidden">
+            <h2>SUPPORT & CREDITS</h2>
+            <div class="info-layout-container">
+                <div class="info-section">
+                    <h3>CREATED & DEVELOPED BY</h3>
+                    <p class="highlight-text">Moshiur Tanvin</p>
+                    <p class="sub-text">Lead Developer & Designer</p>
+                </div>
+                
+                <div class="info-section">
+                    <h3>GAME CORE ENGINE</h3>
+                    <p>VOID RUNNER: OP EDITION v1.0.0</p>
+                    <p class="sub-text">HTML5 Canvas API / JS Engine</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>COMMUNITY & SUPPORT</h3>
+                    <div class="link-group">
+                        <a href="https://www.github.com/mtevan" target="_blank" rel="noopener noreferrer" class="info-link">GitHub Repository</a>
+                        <a href="mailto:tanvinevan9@gmail.com" class="info-link">Email Support</a>
+                    </div>
+                </div>
+
+                <div class="copyright-tag">
+                    © 2026 Moshiur Tanvin. All Rights Reserved.
+                </div>
+            </div>
+            <button id="info-back-btn" class="btn btn-back">RETURN TO MENU</button>
         </div>
 
         <div id="gameover-screen" class="view-screen hidden">

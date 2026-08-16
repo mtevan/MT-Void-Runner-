@@ -442,3 +442,29 @@ function runGlobalFrameTickLoop() {
     requestAnimationFrame(runGlobalFrameTickLoop);
 }
 requestAnimationFrame(runGlobalFrameTickLoop);
+
+// UI Screen Switch Logic for Support & Info Button
+const infoBtn = document.getElementById('info-btn');
+const infoBackBtn = document.getElementById('info-back-btn');
+const infoScreen = document.getElementById('info-screen');
+const menuScreen = document.getElementById('menu-screen');
+
+if (infoBtn && infoBackBtn && infoScreen && menuScreen) {
+    // Open Support & Credits Screen
+    infoBtn.addEventListener('click', () => {
+        menuScreen.classList.remove('active');
+        menuScreen.classList.add('hidden');
+        
+        infoScreen.classList.remove('hidden');
+        infoScreen.classList.add('active');
+    });
+
+    // Return to Main Menu
+    infoBackBtn.addEventListener('click', () => {
+        infoScreen.classList.remove('active');
+        infoScreen.classList.add('hidden');
+        
+        menuScreen.classList.remove('hidden');
+        menuScreen.classList.add('active');
+    });
+}
