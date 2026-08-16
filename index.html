@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>VOID RUNNER : OP EDITION</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -33,12 +33,16 @@
             <div class="hud-card color-shield">SHIELD: <span id="shield-val">READY</span></div>
         </div>
 
-        <!-- Floating Bubble Control Buttons -->
+        <!-- On-screen mobile action controls -->
         <div id="mobile-controls-container" class="hidden">
-            <button id="m-btn-jump" class="mobile-action-btn">JUMP</button>
-            <button id="m-btn-shift" class="mobile-action-btn color-shift">SHIFT</button>
-            <button id="m-btn-shield" class="mobile-action-btn color-shield">SHIELD</button>
-            <button id="m-btn-nitro" class="mobile-action-btn color-nitro">NITRO</button>
+            <div class="touch-group-left">
+                <button id="m-btn-jump" class="mobile-action-btn color-jump">JUMP</button>
+            </div>
+            <div class="touch-group-right">
+                <button id="m-btn-shift" class="mobile-action-btn color-shift">SHIFT</button>
+                <button id="m-btn-shield" class="mobile-action-btn color-shield">SHIELD</button>
+                <button id="m-btn-nitro" class="mobile-action-btn color-nitro">NITRO</button>
+            </div>
         </div>
 
         <div id="menu-screen" class="view-screen active">
@@ -98,7 +102,7 @@
             <h1 style="color: #ffea00; text-shadow: 0 0 15px #ffea00;">RUN SUSPENDED</h1>
             <p class="subtitle">System state currently buffered in memory pipeline.</p>
             <div class="btn-group">
-                <button id="resume-btn" class="btn btn-primary">RESUME OPERATION [ESC]</button>
+                <button id="resume-btn" class="btn btn-primary">RESUME OPERATION</button>
                 <button id="pause-exit-btn" class="btn btn-back">ABORT RUN PROTOCOL</button>
             </div>
         </div>
@@ -107,38 +111,38 @@
             <h2>TACTICAL SCHEMATICS & MECHANICS</h2>
             <div class="controls-layout-container">
                 <div class="control-card-row">
-                    <span class="key-badge">SPACEBAR</span>
+                    <span class="key-badge">TAP / SPACE</span>
                     <div class="control-detail">
                         <h4>GRAVITY REBOUND JUMP</h4>
-                        <p>Press once to leap. Press mid-air to execute a Double Jump. Crucial for clearing massive platform data streams.</p>
+                        <p>Leap across gaps. Tap mid-air to execute a Double Jump.</p>
                     </div>
                 </div>
                 <div class="control-card-row">
-                    <span class="key-badge">ESC / INTERFACE</span>
+                    <span class="key-badge">PAUSE / ESC</span>
                     <div class="control-detail">
                         <h4>REAL-TIME PAUSE PROTOCOL</h4>
-                        <p>Instantly freezes state execution pipelines mid-run to recalculate strategy. Click Resume to re-enter loop seamlessly.</p>
+                        <p>Freezes state execution pipelines mid-run to recalibrate strategy.</p>
                     </div>
                 </div>
                 <div class="control-card-row">
-                    <span class="key-badge">Q / E</span>
+                    <span class="key-badge">SHIFT / Q / E</span>
                     <div class="control-detail">
                         <h4>DIMENSIONAL SCHISM SHIFT</h4>
-                        <p>Toggles your state sync between **SKY MATRIX** and **VOID FRACTURE**. Obstacles only harm you if they match your dimension!</p>
+                        <p>Toggles sync between SKY and VOID dimensions. Obstacles only harm matching states.</p>
                     </div>
                 </div>
                 <div class="control-card-row">
-                    <span class="key-badge">SHIFT / MID-CLICK</span>
+                    <span class="key-badge">SHIELD / MID-CLK</span>
                     <div class="control-detail">
                         <h4>RIFT SHIELD INTEGRITY</h4>
-                        <p>Deploys a protective dome. You become completely invulnerable and atomize any solid structures into bonus points.</p>
+                        <p>Deploys temporary invulnerability, atomizing hazards into bonus score.</p>
                     </div>
                 </div>
                 <div class="control-card-row">
-                    <span class="key-badge">F KEY</span>
+                    <span class="key-badge">NITRO / F KEY</span>
                     <div class="control-detail">
                         <h4>NITRO DATA FLASH</h4>
-                        <p>Triggers a localized velocity burst, increasing speed by 200% instantly while rendering you immune to platform traps.</p>
+                        <p>Triggers localized velocity bursts, providing temporary high-speed phase immunity.</p>
                     </div>
                 </div>
             </div>

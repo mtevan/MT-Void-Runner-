@@ -1,5 +1,5 @@
 /**
- * VOID RUNNER : OP EDITION - Universal Mobile Orientation & Bubble Controls
+ * VOID RUNNER : OP EDITION - Mobile Touch Engine & Responsive Scaling
  */
 
 const canvas = document.getElementById("gameCanvas");
@@ -67,7 +67,7 @@ const DIMENSIONS = {
     VOID: { color: "#ff0055", bg: "#0c0107", trail: "rgba(255, 0, 85, 0.25)" }
 };
 
-// 10 Vector Character Definition Matrix Registry
+// Avatar Models
 const AVATAR_REGISTRY = [
     { id: "cyber_sphere", name: "Cyber Sphere", draw: (c, x, y, w, h, col) => { c.beginPath(); c.arc(x+w/2, y+h/2, w/2, 0, Math.PI*2); c.fillStyle = col; c.fill(); } },
     { id: "apex_vector", name: "Apex Vector", draw: (c, x, y, w, h, col) => { c.beginPath(); c.moveTo(x+w/2, y); c.lineTo(x+w, y+h); c.lineTo(x, y+h); c.closePath(); c.fillStyle = col; c.fill(); } },
@@ -103,16 +103,6 @@ class Particle {
     }
     update() { this.x += this.vx; this.y += this.vy; this.alpha -= this.decay; }
     draw() { ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
-}
-
-function requestMobileLandscapeLock() {
-    if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().then(() => {
-            if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock("landscape").catch(() => {});
-            }
-        }).catch(() => {});
-    }
 }
 
 function switchUI(state) {
@@ -178,7 +168,7 @@ function renderBuildLevelsMatrixGrid() {
         const box = document.createElement("div"); box.innerText = i;
         if (i <= unlockedLevel) {
             box.className = "lvl-box unlocked";
-            box.onclick = () => { currentSelectedLevel = i; requestMobileLandscapeLock(); initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
+            box.onclick = () => { currentSelectedLevel = i; initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
         } else { box.className = "lvl-box"; }
         container.appendChild(box);
     }
@@ -381,28 +371,29 @@ function executeFatalCollapse() {
     scoreHighElement.innerText = highScore;
 }
 
-// Mobile Interface Touch Initialization Listeners
-document.getElementById("m-btn-jump").addEventListener("touchstart", (e) => {
+// Mobile Interface Touch Event Handlers
+function attachTouchEvents(id, handler) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        handler();
+    }, { passive: false });
+}
+
+attachTouchEvents("m-btn-jump", () => { if (currentGameState === "PLAYING") handleJumpInput(); });
+attachTouchEvents("m-btn-shift", () => { if (currentGameState === "PLAYING") currentDimension = currentDimension === "SKY" ? "VOID" : "SKY"; });
+attachTouchEvents("m-btn-shield", () => { if (currentGameState === "PLAYING") triggerShieldActivation(); });
+attachTouchEvents("m-btn-nitro", () => { if (currentGameState === "PLAYING") triggerNitroDashBoost(); });
+
+// Tap Canvas to Jump on Mobile
+canvas.addEventListener("touchstart", (e) => {
+    if (e.target.closest('#mobile-controls-container') || e.target.closest('#pause-trigger-btn')) return;
     e.preventDefault();
     if (currentGameState === "PLAYING") handleJumpInput();
-});
+}, { passive: false });
 
-document.getElementById("m-btn-shift").addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    if (currentGameState === "PLAYING") currentDimension = currentDimension === "SKY" ? "VOID" : "SKY";
-});
-
-document.getElementById("m-btn-shield").addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    if (currentGameState === "PLAYING") triggerShieldActivation();
-});
-
-document.getElementById("m-btn-nitro").addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    if (currentGameState === "PLAYING") triggerNitroDashBoost();
-});
-
-// Keyboard Hardware Event Engine Binding
+// Keyboard Hardware Bindings
 window.addEventListener("keydown", (e) => {
     if (e.code === "Escape") { e.preventDefault(); togglePauseState(); return; }
     if (currentGameState !== "PLAYING") return;
@@ -412,7 +403,7 @@ window.addEventListener("keydown", (e) => {
     if (e.code === "KeyF") triggerNitroDashBoost();
 });
 
-// Structural Matrix Control Maps Links
+// UI Event Handlers
 pauseTriggerBtn.onclick = () => togglePauseState();
 document.getElementById("resume-btn").onclick = () => togglePauseState();
 
@@ -420,13 +411,13 @@ document.getElementById("pause-exit-btn").onclick = () => { currentGameState = "
 document.getElementById("gameover-menu-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
 document.getElementById("avatar-back-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
 
-document.getElementById("play-btn").onclick = () => { requestMobileLandscapeLock(); initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
+document.getElementById("play-btn").onclick = () => { initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
 document.getElementById("char-select-btn").onclick = () => { renderBuildAvatarGrid(); switchUI("AVATAR"); };
 document.getElementById("levels-btn").onclick = () => { renderBuildLevelsMatrixGrid(); switchUI("LEVELS"); };
 document.getElementById("levels-back-btn").onclick = () => switchUI("MENU");
 document.getElementById("controls-btn").onclick = () => { switchUI("CONTROLS"); };
 document.getElementById("controls-back-btn").onclick = () => switchUI("MENU");
-document.getElementById("retry-btn").onclick = () => { requestMobileLandscapeLock(); initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
+document.getElementById("retry-btn").onclick = () => { initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
 document.getElementById("shop-btn").onclick = () => { updateHUDDisplays(); switchUI("SHOP"); };
 document.getElementById("shop-back-btn").onclick = () => switchUI("MENU");
 
