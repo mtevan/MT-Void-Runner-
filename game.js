@@ -1,5 +1,5 @@
 /**
- * VOID RUNNER : OP EDITION - Structural Stability Fixes
+ * VOID RUNNER : OP EDITION - Universal Mobile Orientation & Bubble Controls
  */
 
 const canvas = document.getElementById("gameCanvas");
@@ -105,6 +105,16 @@ class Particle {
     draw() { ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
 }
 
+function requestMobileLandscapeLock() {
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().then(() => {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock("landscape").catch(() => {});
+            }
+        }).catch(() => {});
+    }
+}
+
 function switchUI(state) {
     Object.keys(viewScreens).forEach(k => {
         viewScreens[k].classList.remove("active");
@@ -168,7 +178,7 @@ function renderBuildLevelsMatrixGrid() {
         const box = document.createElement("div"); box.innerText = i;
         if (i <= unlockedLevel) {
             box.className = "lvl-box unlocked";
-            box.onclick = () => { currentSelectedLevel = i; initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
+            box.onclick = () => { currentSelectedLevel = i; requestMobileLandscapeLock(); initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
         } else { box.className = "lvl-box"; }
         container.appendChild(box);
     }
@@ -410,13 +420,13 @@ document.getElementById("pause-exit-btn").onclick = () => { currentGameState = "
 document.getElementById("gameover-menu-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
 document.getElementById("avatar-back-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
 
-document.getElementById("play-btn").onclick = () => { initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
+document.getElementById("play-btn").onclick = () => { requestMobileLandscapeLock(); initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
 document.getElementById("char-select-btn").onclick = () => { renderBuildAvatarGrid(); switchUI("AVATAR"); };
 document.getElementById("levels-btn").onclick = () => { renderBuildLevelsMatrixGrid(); switchUI("LEVELS"); };
 document.getElementById("levels-back-btn").onclick = () => switchUI("MENU");
 document.getElementById("controls-btn").onclick = () => { switchUI("CONTROLS"); };
 document.getElementById("controls-back-btn").onclick = () => switchUI("MENU");
-document.getElementById("retry-btn").onclick = () => { initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
+document.getElementById("retry-btn").onclick = () => { requestMobileLandscapeLock(); initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
 document.getElementById("shop-btn").onclick = () => { updateHUDDisplays(); switchUI("SHOP"); };
 document.getElementById("shop-back-btn").onclick = () => switchUI("MENU");
 

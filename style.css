@@ -103,40 +103,84 @@ h1 { font-size: 2.8rem; margin: 0; letter-spacing: 4px; color: var(--neon-blue);
 .btn-exit { border-color: #ff3333; color: #ff3333; }
 .btn-exit:hover { background: #ff3333; color: #fff; box-shadow: 0 0 15px #ff3333; }
 
-/* 📱 ISOLATED MOBILE VIEW CODES - ONLY TRIGGERS ON MOBILE DEVICES */
+/* 📱 FLOATING BUBBLE CONTROLS & AUTO-HORIZONTAL LANDSCAPE LOCK */
 @media (max-width: 860px) {
+    /* Auto-Rotate Screen Horizontally if Device is held Vertically */
+    @media (orientation: portrait) {
+        #game-container {
+            transform: rotate(90deg);
+            transform-origin: center center;
+            width: 100vh !important;
+            height: 100vw !important;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -50vw;
+            margin-left: -50vh;
+        }
+    }
+
     #game-container {
         width: 100vw;
-        height: 56.25vw; /* Perfectly locks canvas 16:9 aspect-ratio aspect on mobile */
+        height: 100vh;
         max-width: 100%;
         max-height: 100vh;
+        border: none;
     }
     
-    /* Clean Top compact rows avoiding runner visibility workspace */
     #hud { top: 6px; left: 8px; right: 8px; gap: 4px; }
     .hud-card { padding: 3px 6px; font-size: 0.55rem; }
     #pause-trigger-btn { top: 35px; right: 8px; padding: 3px 8px; font-size: 0.6rem; }
     
-    /* Pull progress bars cleanly to top edge to stop covering runner paths */
-    #progress-container { top: 36px; bottom: auto; left: 8px; width: 75%; gap: 2px; }
+    #progress-container { top: 36px; bottom: auto; left: 8px; width: 65%; gap: 2px; }
     .progress-track { height: 4px; }
-    .progress-label { display: none; } /* Hide labels to save valuable mobile room */
+    .progress-label { display: none; }
 
-    /* Fixed on-screen control action button matrix at viewport bottom */
+    /* FLOATING BUBBLE CONTROLS */
     #mobile-controls-container {
-        position: absolute; bottom: 8px; left: 4%; width: 92%;
-        display: flex; justify-content: space-between; gap: 6px; z-index: 8;
+        position: absolute; 
+        bottom: 15px; 
+        left: 15px; 
+        right: 15px;
+        width: auto;
+        display: flex; 
+        justify-content: space-between; 
+        align-items: flex-end;
+        pointer-events: none;
+        z-index: 20;
     }
+
     .mobile-action-btn {
-        flex: 1; height: 38px; background: rgba(0, 0, 0, 0.8);
-        border: 2px solid var(--neon-blue); color: #fff; border-radius: 6px;
-        font-family: inherit; font-size: 0.7rem; font-weight: bold; cursor: pointer;
+        pointer-events: auto;
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(4px);
+        border: 2px solid var(--neon-blue);
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.65rem;
+        font-weight: bold;
+        box-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.1s ease, background 0.1s ease;
     }
-    .mobile-action-btn:active { background: var(--neon-blue); color: #000; }
-    .mobile-action-btn.color-shift { border-color: #df00ff; color: #df00ff; }
+
+    .mobile-action-btn:active {
+        transform: scale(0.9);
+        background: var(--neon-blue);
+        color: #000;
+    }
+
+    .mobile-action-btn.color-shift { border-color: #df00ff; color: #df00ff; box-shadow: 0 0 12px rgba(223, 0, 255, 0.4); }
     .mobile-action-btn.color-shift:active { background: #df00ff; color: #fff; }
-    .mobile-action-btn.color-shield { border-color: #ffea00; color: #ffea00; }
+    
+    .mobile-action-btn.color-shield { border-color: #ffea00; color: #ffea00; box-shadow: 0 0 12px rgba(255, 234, 0, 0.4); }
     .mobile-action-btn.color-shield:active { background: #ffea00; color: #000; }
-    .mobile-action-btn.color-nitro { border-color: var(--neon-green); color: var(--neon-green); }
+    
+    .mobile-action-btn.color-nitro { border-color: var(--neon-green); color: var(--neon-green); box-shadow: 0 0 12px rgba(57, 255, 20, 0.4); }
     .mobile-action-btn.color-nitro:active { background: var(--neon-green); color: #000; }
 }
