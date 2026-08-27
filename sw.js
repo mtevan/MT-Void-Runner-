@@ -1,4 +1,5 @@
-const CACHE_NAME = 'void-runner-v1';
+// Bump version to v2 to force mobile WebView cache refresh
+const CACHE_NAME = 'void-runner-v2';
 
 // All local assets to cache for offline play
 const ASSETS_TO_CACHE = [

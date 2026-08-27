@@ -483,12 +483,14 @@ if (infoBtn && infoBackBtn && infoScreen && menuScreen) {
     });
 }
 
-// Simulated Bootloader / Loading Sequence
-window.addEventListener('load', () => {
+// Reliable Bootloader Initialization for Mobile WebViews & Desktops
+function startBootloaderSequence() {
     const loadingScreen = document.getElementById('loading-screen');
     const menuScreen = document.getElementById('menu-screen');
     const loaderBarFill = document.getElementById('loader-bar-fill');
     const loaderStatusText = document.getElementById('loader-status-text');
+
+    if (!loadingScreen || !menuScreen) return;
 
     const bootStages = [
         "CONNECTING TO VOID ENGINE...",
@@ -521,7 +523,14 @@ window.addEventListener('load', () => {
                 loadingScreen.classList.add('hidden');
                 menuScreen.classList.remove('hidden');
                 menuScreen.classList.add('active');
-            }, 400);
+            }, 300);
         }
-    }, 120);
-});
+    }, 100);
+}
+
+// Trigger immediately if DOM is ready, otherwise wait for DOMContentLoaded
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    startBootloaderSequence();
+} else {
+    document.addEventListener('DOMContentLoaded', startBootloaderSequence);
+}
