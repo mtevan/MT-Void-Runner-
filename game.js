@@ -13,10 +13,12 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 const viewScreens = {
+    loading: document.getElementById("loading-screen"),
     menu: document.getElementById("menu-screen"),
     avatar: document.getElementById("avatar-screen"),
     levels: document.getElementById("levels-screen"),
@@ -25,6 +27,7 @@ const viewScreens = {
     controls: document.getElementById("controls-screen"),
     gameover: document.getElementById("gameover-screen")
 };
+
 const hudContainer = document.getElementById("hud");
 const progressContainer = document.getElementById("progress-container");
 const progressBar = document.getElementById("progress-bar");
@@ -479,3 +482,46 @@ if (infoBtn && infoBackBtn && infoScreen && menuScreen) {
         menuScreen.classList.add('active');
     });
 }
+
+// Simulated Bootloader / Loading Sequence
+window.addEventListener('load', () => {
+    const loadingScreen = document.getElementById('loading-screen');
+    const menuScreen = document.getElementById('menu-screen');
+    const loaderBarFill = document.getElementById('loader-bar-fill');
+    const loaderStatusText = document.getElementById('loader-status-text');
+
+    const bootStages = [
+        "CONNECTING TO VOID ENGINE...",
+        "LOADING REALITY ARRAYS...",
+        "INITIALIZING SECTOR MATRIX...",
+        "SYNCING SHARD CURRENCY PROTOCOLS...",
+        "SYSTEM READY. ACCESSED."
+    ];
+
+    let progress = 0;
+
+    const loadInterval = setInterval(() => {
+        progress += Math.floor(Math.random() * 15) + 5;
+        if (progress > 100) progress = 100;
+
+        if (loaderBarFill) loaderBarFill.style.width = `${progress}%`;
+
+        if (loaderStatusText) {
+            if (progress < 25) loaderStatusText.textContent = `${bootStages[0]} [${progress}%]`;
+            else if (progress < 55) loaderStatusText.textContent = `${bootStages[1]} [${progress}%]`;
+            else if (progress < 80) loaderStatusText.textContent = `${bootStages[2]} [${progress}%]`;
+            else if (progress < 100) loaderStatusText.textContent = `${bootStages[3]} [${progress}%]`;
+            else loaderStatusText.textContent = `${bootStages[4]} [100%]`;
+        }
+
+        if (progress >= 100) {
+            clearInterval(loadInterval);
+            setTimeout(() => {
+                loadingScreen.classList.remove('active');
+                loadingScreen.classList.add('hidden');
+                menuScreen.classList.remove('hidden');
+                menuScreen.classList.add('active');
+            }, 400);
+        }
+    }, 120);
+});
