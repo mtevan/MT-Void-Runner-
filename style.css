@@ -295,30 +295,30 @@ h1 { font-size: 2.8rem; margin: 0; letter-spacing: 4px; color: var(--neon-blue);
 .mobile-action-btn.color-nitro { border-color: var(--neon-green); color: var(--neon-green); box-shadow: 0 0 12px rgba(57, 255, 20, 0.5); }
 .mobile-action-btn.color-nitro:active { background: var(--neon-green); color: #000; }
 
+@media (max-width: 900px) and (orientation: portrait) {
+    #game-container {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        width: 100vh !important;
+        height: 100vw !important;
+        transform: translate(-50%, -50%) rotate(90deg) !important;
+        transform-origin: center center !important;
+    }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+    #game-container {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        transform: none !important;
+    }
+}
+
 @media (max-width: 900px) {
-    @media (orientation: portrait) {
-        #game-container {
-            position: fixed !important;
-            top: 50% !important;
-            left: 50% !important;
-            width: 100vh !important;
-            height: 100vw !important;
-            transform: translate(-50%, -50%) rotate(90deg) !important;
-            transform-origin: center center !important;
-        }
-    }
-
-    @media (orientation: landscape) {
-        #game-container {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            transform: none !important;
-        }
-    }
-
     #game-container {
         border: none !important;
         box-shadow: none !important;
