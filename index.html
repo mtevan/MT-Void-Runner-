@@ -10,16 +10,15 @@
 <body>
 
     <!-- Splash Screen Overlay -->
-<div id="splash-screen" class="screen active">
-    <div class="splash-content">
-        <!-- Replace src with your image file path or URL -->
-        <img src="logo.png" alt="Game Logo" class="splash-logo"> 
-        <div class="splash-loader-bar">
-            <div id="splash-progress"></div>
+    <div id="splash-screen" class="screen active">
+        <div class="splash-content">
+            <img src="splash.png" alt="VOID RUNNER OP EDITION" class="splash-img"> 
+            <div class="splash-loader-bar">
+                <div id="splash-progress"></div>
+            </div>
+            <div class="splash-text">INITIALIZING SYSTEM...</div>
         </div>
-        <div class="splash-text">INITIALIZING SYSTEM...</div>
     </div>
-</div>
 
     <div id="game-container">
 
@@ -60,7 +59,7 @@
         </div>
 
         <!-- Menu Screen -->
-        <div id="menu-screen" class="view-screen active">
+        <div id="menu-screen" class="view-screen hidden">
             <h1 class="glitch" data-text="VOID RUNNER">VOID RUNNER</h1>
             <h2 class="subtitle">OP EDITION</h2>
             <div class="btn-group">
