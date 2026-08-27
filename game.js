@@ -1,24 +1,11 @@
 /**
  * VOID RUNNER : OP EDITION - Mobile Touch Engine & Responsive Scaling
  */
-// Register Service Worker for Offline PWA Capabilities
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then((registration) => {
-                console.log('SW Registered successfully with scope:', registration.scope);
-            })
-            .catch((error) => {
-                console.error('SW Registration failed:', error);
-            });
-    });
-}
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 const viewScreens = {
-    loading: document.getElementById("loading-screen"),
     menu: document.getElementById("menu-screen"),
     avatar: document.getElementById("avatar-screen"),
     levels: document.getElementById("levels-screen"),
@@ -27,7 +14,6 @@ const viewScreens = {
     controls: document.getElementById("controls-screen"),
     gameover: document.getElementById("gameover-screen")
 };
-
 const hudContainer = document.getElementById("hud");
 const progressContainer = document.getElementById("progress-container");
 const progressBar = document.getElementById("progress-bar");
@@ -481,66 +467,4 @@ if (infoBtn && infoBackBtn && infoScreen && menuScreen) {
         menuScreen.classList.remove('hidden');
         menuScreen.classList.add('active');
     });
-}
-
-// Reliable 5-Second Bootloader Sequence for Mobile & PC
-function startBootloaderSequence() {
-    const loadingScreen = document.getElementById('loading-screen');
-    const menuScreen = document.getElementById('menu-screen');
-    const loaderBarFill = document.getElementById('loader-bar-fill');
-    const loaderStatusText = document.getElementById('loader-status-text');
-
-    if (!loadingScreen || !menuScreen) return;
-
-    const bootStages = [
-        "CONNECTING TO VOID ENGINE...",
-        "LOADING REALITY ARRAYS...",
-        "INITIALIZING SECTOR MATRIX...",
-        "SYNCING SHARD CURRENCY PROTOCOLS...",
-        "SYSTEM READY. ACCESSED."
-    ];
-
-    const TOTAL_DURATION_MS = 5000; // 5 Seconds Total
-    const UPDATE_INTERVAL_MS = 50;  // Smooth 50ms ticks
-    const TOTAL_STEPS = TOTAL_DURATION_MS / UPDATE_INTERVAL_MS;
-    
-    let currentStep = 0;
-
-    const loadInterval = setInterval(() => {
-        currentStep++;
-        let progress = Math.floor((currentStep / TOTAL_STEPS) * 100);
-
-        if (progress > 100) progress = 100;
-
-        // Smooth progress bar movement
-        if (loaderBarFill) loaderBarFill.style.width = `${progress}%`;
-
-        // Stage message transitions across 5 seconds
-        if (loaderStatusText) {
-            if (progress < 25) loaderStatusText.textContent = `${bootStages[0]} [${progress}%]`;
-            else if (progress < 50) loaderStatusText.textContent = `${bootStages[1]} [${progress}%]`;
-            else if (progress < 75) loaderStatusText.textContent = `${bootStages[2]} [${progress}%]`;
-            else if (progress < 99) loaderStatusText.textContent = `${bootStages[3]} [${progress}%]`;
-            else loaderStatusText.textContent = `${bootStages[4]} [100%]`;
-        }
-
-        // Complete sequence at exactly 5 seconds
-        if (currentStep >= TOTAL_STEPS) {
-            clearInterval(loadInterval);
-            
-            setTimeout(() => {
-                loadingScreen.classList.remove('active');
-                loadingScreen.classList.add('hidden');
-                menuScreen.classList.remove('hidden');
-                menuScreen.classList.add('active');
-            }, 200);
-        }
-    }, UPDATE_INTERVAL_MS);
-}
-
-// Mobile Webview & Browser Ready Execution
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    startBootloaderSequence();
-} else {
-    document.addEventListener('DOMContentLoaded', startBootloaderSequence);
 }
