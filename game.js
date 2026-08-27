@@ -1,7 +1,18 @@
 /**
  * VOID RUNNER : OP EDITION - Mobile Touch Engine & Responsive Scaling
  */
-
+// Register Service Worker for Offline PWA Capabilities
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then((registration) => {
+                console.log('SW Registered successfully with scope:', registration.scope);
+            })
+            .catch((error) => {
+                console.error('SW Registration failed:', error);
+            });
+    });
+}
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 

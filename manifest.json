@@ -1,0 +1,16 @@
+{
+  "name": "VOID RUNNER : OP EDITION",
+  "short_name": "VoidRunner",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#020308",
+  "theme_color": "#00f3ff",
+  "icons": [
+    {
+      "src": "image_0.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
