@@ -273,6 +273,8 @@ h1 { font-size: 2.8rem; margin: 0; letter-spacing: 4px; color: var(--neon-blue);
     align-items: center;
     box-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
     touch-action: manipulation;
+    cursor: pointer; /* Enable pointer cursor for desktop clicks */
+    pointer-events: auto; /* Ensure mouse clicks register */
     transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 

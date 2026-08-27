@@ -378,20 +378,25 @@ function executeFatalCollapse() {
 }
 
 // Touch Event Attachments with StopPropagation to Prevent Dual Triggers
-function attachTouchEvents(id, handler) {
+f// Universal Event Handler for both Touch and Desktop Clicks
+function attachControlEvents(id, handler) {
     const el = document.getElementById(id);
     if (!el) return;
-    el.addEventListener("touchstart", (e) => {
+    
+    const trigger = (e) => {
         e.preventDefault();
         e.stopPropagation();
         handler();
-    }, { passive: false });
+    };
+
+    el.addEventListener("touchstart", trigger, { passive: false });
+    el.addEventListener("click", trigger);
 }
 
-attachTouchEvents("m-btn-jump", () => { if (currentGameState === "PLAYING") handleJumpInput(); });
-attachTouchEvents("m-btn-shift", () => { if (currentGameState === "PLAYING") currentDimension = currentDimension === "SKY" ? "VOID" : "SKY"; });
-attachTouchEvents("m-btn-shield", () => { if (currentGameState === "PLAYING") triggerShieldActivation(); });
-attachTouchEvents("m-btn-nitro", () => { if (currentGameState === "PLAYING") triggerNitroDashBoost(); });
+attachControlEvents("m-btn-jump", () => { if (currentGameState === "PLAYING") handleJumpInput(); });
+attachControlEvents("m-btn-shift", () => { if (currentGameState === "PLAYING") currentDimension = currentDimension === "SKY" ? "VOID" : "SKY"; });
+attachControlEvents("m-btn-shield", () => { if (currentGameState === "PLAYING") triggerShieldActivation(); });
+attachControlEvents("m-btn-nitro", () => { if (currentGameState === "PLAYING") triggerNitroDashBoost(); });
 
 canvas.addEventListener("touchstart", (e) => {
     if (e.target.closest('#mobile-controls-container') || e.target.closest('#pause-trigger-btn')) return;
