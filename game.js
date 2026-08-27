@@ -483,7 +483,7 @@ if (infoBtn && infoBackBtn && infoScreen && menuScreen) {
     });
 }
 
-// Reliable Bootloader Initialization for Mobile WebViews & Desktops
+// Reliable 5-Second Bootloader Sequence for Mobile & PC
 function startBootloaderSequence() {
     const loadingScreen = document.getElementById('loading-screen');
     const menuScreen = document.getElementById('menu-screen');
@@ -500,35 +500,45 @@ function startBootloaderSequence() {
         "SYSTEM READY. ACCESSED."
     ];
 
-    let progress = 0;
+    const TOTAL_DURATION_MS = 5000; // 5 Seconds Total
+    const UPDATE_INTERVAL_MS = 50;  // Smooth 50ms ticks
+    const TOTAL_STEPS = TOTAL_DURATION_MS / UPDATE_INTERVAL_MS;
+    
+    let currentStep = 0;
 
     const loadInterval = setInterval(() => {
-        progress += Math.floor(Math.random() * 15) + 5;
+        currentStep++;
+        let progress = Math.floor((currentStep / TOTAL_STEPS) * 100);
+
         if (progress > 100) progress = 100;
 
+        // Smooth progress bar movement
         if (loaderBarFill) loaderBarFill.style.width = `${progress}%`;
 
+        // Stage message transitions across 5 seconds
         if (loaderStatusText) {
             if (progress < 25) loaderStatusText.textContent = `${bootStages[0]} [${progress}%]`;
-            else if (progress < 55) loaderStatusText.textContent = `${bootStages[1]} [${progress}%]`;
-            else if (progress < 80) loaderStatusText.textContent = `${bootStages[2]} [${progress}%]`;
-            else if (progress < 100) loaderStatusText.textContent = `${bootStages[3]} [${progress}%]`;
+            else if (progress < 50) loaderStatusText.textContent = `${bootStages[1]} [${progress}%]`;
+            else if (progress < 75) loaderStatusText.textContent = `${bootStages[2]} [${progress}%]`;
+            else if (progress < 99) loaderStatusText.textContent = `${bootStages[3]} [${progress}%]`;
             else loaderStatusText.textContent = `${bootStages[4]} [100%]`;
         }
 
-        if (progress >= 100) {
+        // Complete sequence at exactly 5 seconds
+        if (currentStep >= TOTAL_STEPS) {
             clearInterval(loadInterval);
+            
             setTimeout(() => {
                 loadingScreen.classList.remove('active');
                 loadingScreen.classList.add('hidden');
                 menuScreen.classList.remove('hidden');
                 menuScreen.classList.add('active');
-            }, 300);
+            }, 200);
         }
-    }, 100);
+    }, UPDATE_INTERVAL_MS);
 }
 
-// Trigger immediately if DOM is ready, otherwise wait for DOMContentLoaded
+// Mobile Webview & Browser Ready Execution
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
     startBootloaderSequence();
 } else {
