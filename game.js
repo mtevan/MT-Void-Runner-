@@ -1,6 +1,14 @@
 /**
- * VOID RUNNER : OP EDITION - Mobile Touch Engine & Responsive Scaling
+ * VOID RUNNER : OP EDITION Engine
  */
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW Registered:', reg.scope))
+            .catch(err => console.error('SW Registration Failed:', err));
+    });
+}
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -12,8 +20,10 @@ const viewScreens = {
     shop: document.getElementById("shop-screen"),
     pause: document.getElementById("pause-screen"),
     controls: document.getElementById("controls-screen"),
+    info: document.getElementById("info-screen"),
     gameover: document.getElementById("gameover-screen")
 };
+
 const hudContainer = document.getElementById("hud");
 const progressContainer = document.getElementById("progress-container");
 const progressBar = document.getElementById("progress-bar");
@@ -36,15 +46,11 @@ const shopAlert = document.getElementById("shop-alert");
 const scoreFinal = document.getElementById("final-score");
 const comboFinal = document.getElementById("final-combo");
 const scoreHighElement = document.getElementById("high-score-val");
-const completionTitle = document.getElementById("completion-title");
-const completionSubtitle = document.getElementById("completion-subtitle");
 const shopCurrencyDisplay = document.getElementById("shop-currency-val");
 
-// Configuration Maps
 const SPEED_MODIFIERS = { startSpeed: 5.5, accel: 0.001, scoreMult: 1.0 };
 function getLevelTargetDistance(level) { return 300 + (level * 150); }
 
-// Meta State Configuration Engine
 let currentGameState = "MENU";
 let highScore = parseInt(localStorage.getItem("vrop_high")) || 0;
 let unlockedLevel = parseInt(localStorage.getItem("vrop_level")) || 1;
@@ -54,7 +60,6 @@ let selectedAvatarID = localStorage.getItem("vrop_avatar") || "cyber_sphere";
 
 let coreUpgrades = JSON.parse(localStorage.getItem("vrop_upgrades")) || { shieldDur: 0, phaseExt: 0, dashCDReduction: 0 };
 
-// Running Live Parameters
 let score = 0, combo = 1, globalSpeed = 5.5, currentDimension = "SKY";
 let distanceTraveled = 0, screenShakeTimer = 0, levelClearedNotificationTimer = 0;
 let liveShardsCollectedThisRun = 0, runStartTimeStamp = 0;
@@ -67,7 +72,6 @@ const DIMENSIONS = {
     VOID: { color: "#ff0055", bg: "#0c0107", trail: "rgba(255, 0, 85, 0.25)" }
 };
 
-// Avatar Models
 const AVATAR_REGISTRY = [
     { id: "cyber_sphere", name: "Cyber Sphere", draw: (c, x, y, w, h, col) => { c.beginPath(); c.arc(x+w/2, y+h/2, w/2, 0, Math.PI*2); c.fillStyle = col; c.fill(); } },
     { id: "apex_vector", name: "Apex Vector", draw: (c, x, y, w, h, col) => { c.beginPath(); c.moveTo(x+w/2, y); c.lineTo(x+w, y+h); c.lineTo(x, y+h); c.closePath(); c.fillStyle = col; c.fill(); } },
@@ -107,8 +111,10 @@ class Particle {
 
 function switchUI(state) {
     Object.keys(viewScreens).forEach(k => {
-        viewScreens[k].classList.remove("active");
-        viewScreens[k].classList.add("hidden");
+        if (viewScreens[k]) {
+            viewScreens[k].classList.remove("active");
+            viewScreens[k].classList.add("hidden");
+        }
     });
     
     hudContainer.classList.add("hidden"); 
@@ -199,7 +205,7 @@ function triggerNitroDashBoost() {
 
 function togglePauseState() {
     if (currentGameState === "PLAYING") { currentGameState = "PAUSED"; switchUI("PAUSE"); } 
-    else if (currentGameState === "PAUSED") { currentGameState = "PLAYING"; viewScreens.pause.classList.remove("active"); viewScreens.pause.classList.add("hidden"); pauseTriggerBtn.classList.remove("hidden"); const m = document.getElementById("mobile-controls-container"); if(m)m.classList.remove("hidden"); }
+    else if (currentGameState === "PAUSED") { currentGameState = "PLAYING"; switchUI("PLAYING"); }
 }
 
 function handleJumpInput() {
@@ -371,12 +377,13 @@ function executeFatalCollapse() {
     scoreHighElement.innerText = highScore;
 }
 
-// Mobile Interface Touch Event Handlers
+// Touch Event Attachments with StopPropagation to Prevent Dual Triggers
 function attachTouchEvents(id, handler) {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener("touchstart", (e) => {
         e.preventDefault();
+        e.stopPropagation();
         handler();
     }, { passive: false });
 }
@@ -386,14 +393,12 @@ attachTouchEvents("m-btn-shift", () => { if (currentGameState === "PLAYING") cur
 attachTouchEvents("m-btn-shield", () => { if (currentGameState === "PLAYING") triggerShieldActivation(); });
 attachTouchEvents("m-btn-nitro", () => { if (currentGameState === "PLAYING") triggerNitroDashBoost(); });
 
-// Tap Canvas to Jump on Mobile
 canvas.addEventListener("touchstart", (e) => {
     if (e.target.closest('#mobile-controls-container') || e.target.closest('#pause-trigger-btn')) return;
     e.preventDefault();
     if (currentGameState === "PLAYING") handleJumpInput();
 }, { passive: false });
 
-// Keyboard Hardware Bindings
 window.addEventListener("keydown", (e) => {
     if (e.code === "Escape") { e.preventDefault(); togglePauseState(); return; }
     if (currentGameState !== "PLAYING") return;
@@ -403,10 +408,9 @@ window.addEventListener("keydown", (e) => {
     if (e.code === "KeyF") triggerNitroDashBoost();
 });
 
-// UI Event Handlers
+// UI Event Binding Handlers
 pauseTriggerBtn.onclick = () => togglePauseState();
 document.getElementById("resume-btn").onclick = () => togglePauseState();
-
 document.getElementById("pause-exit-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
 document.getElementById("gameover-menu-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
 document.getElementById("avatar-back-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
@@ -415,11 +419,14 @@ document.getElementById("play-btn").onclick = () => { initGame(); currentGameSta
 document.getElementById("char-select-btn").onclick = () => { renderBuildAvatarGrid(); switchUI("AVATAR"); };
 document.getElementById("levels-btn").onclick = () => { renderBuildLevelsMatrixGrid(); switchUI("LEVELS"); };
 document.getElementById("levels-back-btn").onclick = () => switchUI("MENU");
-document.getElementById("controls-btn").onclick = () => { switchUI("CONTROLS"); };
+document.getElementById("controls-btn").onclick = () => switchUI("CONTROLS");
 document.getElementById("controls-back-btn").onclick = () => switchUI("MENU");
 document.getElementById("retry-btn").onclick = () => { initGame(); currentGameState = "PLAYING"; switchUI("PLAYING"); };
 document.getElementById("shop-btn").onclick = () => { updateHUDDisplays(); switchUI("SHOP"); };
 document.getElementById("shop-back-btn").onclick = () => switchUI("MENU");
+
+document.getElementById("info-btn").onclick = () => switchUI("INFO");
+document.getElementById("info-back-btn").onclick = () => switchUI("MENU");
 
 document.getElementById("exit-terminate-btn").onclick = () => {
     window.close();
@@ -442,29 +449,3 @@ function runGlobalFrameTickLoop() {
     requestAnimationFrame(runGlobalFrameTickLoop);
 }
 requestAnimationFrame(runGlobalFrameTickLoop);
-
-// UI Screen Switch Logic for Support & Info Button
-const infoBtn = document.getElementById('info-btn');
-const infoBackBtn = document.getElementById('info-back-btn');
-const infoScreen = document.getElementById('info-screen');
-const menuScreen = document.getElementById('menu-screen');
-
-if (infoBtn && infoBackBtn && infoScreen && menuScreen) {
-    // Open Support & Credits Screen
-    infoBtn.addEventListener('click', () => {
-        menuScreen.classList.remove('active');
-        menuScreen.classList.add('hidden');
-        
-        infoScreen.classList.remove('hidden');
-        infoScreen.classList.add('active');
-    });
-
-    // Return to Main Menu
-    infoBackBtn.addEventListener('click', () => {
-        infoScreen.classList.remove('active');
-        infoScreen.classList.add('hidden');
-        
-        menuScreen.classList.remove('hidden');
-        menuScreen.classList.add('active');
-    });
-}
