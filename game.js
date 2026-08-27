@@ -16,6 +16,7 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 const viewScreens = {
+    splash: document.getElementById("splash-screen"),
     menu: document.getElementById("menu-screen"),
     avatar: document.getElementById("avatar-screen"),
     levels: document.getElementById("levels-screen"),
@@ -495,3 +496,29 @@ function runGlobalFrameTickLoop() {
     requestAnimationFrame(runGlobalFrameTickLoop);
 }
 requestAnimationFrame(runGlobalFrameTickLoop);
+
+function runSplashScreenSequence() {
+    currentGameState = "SPLASH";
+    const progressBar = document.getElementById("splash-progress");
+    const splashScreen = document.getElementById("splash-screen");
+
+    // Trigger loading bar expansion on next DOM frame
+    requestAnimationFrame(() => {
+        if (progressBar) progressBar.style.width = "100%";
+    });
+
+    // Wait 5 seconds (5000ms) before opening the main menu
+    setTimeout(() => {
+        if (splashScreen) {
+            splashScreen.classList.remove("active");
+            splashScreen.classList.add("hidden");
+        }
+        currentGameState = "MENU";
+        switchUI("MENU");
+    }, 5000);
+}
+
+// Start the splash sequence on load instead of jumping to MENU
+window.addEventListener("load", () => {
+    runSplashScreenSequence();
+});
