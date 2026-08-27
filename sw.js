@@ -1,53 +1,50 @@
-// Bump version to v2 to force mobile WebView cache refresh
-const CACHE_NAME = 'void-runner-v2';
-
-// All local assets to cache for offline play
+const CACHE_NAME = 'void-runner-v1';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './style.css',
     './game.js',
-    './image_0.png',
-    './image_1.png',
-    './manifest.json'
+    './manifest.json',
+    './splash.png' // <-- Crucial: Ensure your splash image is pre-cached
 ];
 
-// 1. Install Event: Cache all game resources locally
+// 1. Install Event: Cache static assets
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            console.log('[Service Worker] Caching all game assets...');
+            console.log('[SW] Pre-caching core game assets');
             return cache.addAll(ASSETS_TO_CACHE);
         })
     );
     self.skipWaiting();
 });
 
-// 2. Activate Event: Clean up old caches if updated
+// 2. Activate Event: Clean up old caches
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cache) => {
                     if (cache !== CACHE_NAME) {
-                        console.log('[Service Worker] Clearing old cache:', cache);
+                        console.log('[SW] Clearing old cache:', cache);
                         return caches.delete(cache);
                     }
                 })
             );
         })
     );
-    return self.clients.claim();
+    self.clients.claim();
 });
 
-// 3. Fetch Event: Serve cached assets directly when offline
+// 3. Fetch Event: Cache-First Strategy for Offline Capability
 self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
-            // Return cached version if found, otherwise try network
-            return cachedResponse || fetch(event.request).catch(() => {
-                // Fail-safe fallback if network fails
-                return caches.match('./index.html');
+            if (cachedResponse) {
+                return cachedResponse; // Return cached asset if offline
+            }
+            return fetch(event.request).catch(() => {
+                // Optional offline fallback logic here
             });
         })
     );
