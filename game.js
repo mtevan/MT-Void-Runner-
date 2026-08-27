@@ -1,6 +1,8 @@
 /**
  * VOID RUNNER : OP EDITION Engine
  */
+let countdownValue = 3;
+let countdownInterval = null;
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -204,9 +206,35 @@ function triggerNitroDashBoost() {
     isDashing = true; dashDurationTimer = 15; dashCooldownTimer = Math.max(120, 240 - (coreUpgrades.dashCDReduction * 30));
 }
 
+function startResumeCountdown() {
+    currentGameState = "COUNTDOWN";
+    countdownValue = 3;
+    
+    // Hide pause screen overlay while counting down
+    if (viewScreens.pause) {
+        viewScreens.pause.classList.remove("active");
+        viewScreens.pause.classList.add("hidden");
+    }
+
+    clearInterval(countdownInterval);
+    countdownInterval = setInterval(() => {
+        countdownValue--;
+        if (countdownValue <= 0) {
+            clearInterval(countdownInterval);
+            currentGameState = "PLAYING";
+            switchUI("PLAYING");
+        }
+    }, 1000);
+}
+
 function togglePauseState() {
-    if (currentGameState === "PLAYING") { currentGameState = "PAUSED"; switchUI("PAUSE"); } 
-    else if (currentGameState === "PAUSED") { currentGameState = "PLAYING"; switchUI("PLAYING"); }
+    if (currentGameState === "PLAYING") { 
+        currentGameState = "PAUSED"; 
+        switchUI("PAUSE"); 
+    } 
+    else if (currentGameState === "PAUSED") { 
+        startResumeCountdown();
+    }
 }
 
 function handleJumpInput() {
@@ -341,10 +369,14 @@ function draw() {
 
     particles.forEach(p => p.draw());
 
+    // Clean trail history loop
     player.trailHistory.forEach((pos, idx) => {
-        ctx.save(); ctx.fillStyle = DIMENSIONS[currentDimension].trail; ctx.globalAlpha = (idx / player.trailHistory.length) * 0.25;
+        ctx.save(); 
+        ctx.fillStyle = DIMENSIONS[currentDimension].trail; 
+        ctx.globalAlpha = (idx / player.trailHistory.length) * 0.25;
         let model = AVATAR_REGISTRY.find(a => a.id === selectedAvatarID) || AVATAR_REGISTRY[0];
-        model.draw(ctx, pos.x, pos.y, player.width, player.height, DIMENSIONS[currentDimension].trail); ctx.restore();
+        model.draw(ctx, pos.x, pos.y, player.width, player.height, DIMENSIONS[currentDimension].trail);
+        ctx.restore();
     });
 
     player.draw(isShieldActive ? "#ffea00" : (isDashing ? "#39ff14" : "#ffffff"));
@@ -353,6 +385,23 @@ function draw() {
         ctx.fillStyle = "rgba(57, 255, 20, 0.8)"; ctx.font = "bold 18px Courier New"; ctx.textAlign = "center";
         ctx.fillText("SECTOR MATRIX EXPANDED -> MOVING TO NEXT THRESHOLD DATASTREAM", canvas.width/2, 160);
     }
+
+    // Countdown Overlay (Placed on top of everything)
+    if (currentGameState === "COUNTDOWN") {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#00f3ff";
+        ctx.font = "900 72px 'Courier New', monospace";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(countdownValue, canvas.width / 2, canvas.height / 2);
+        
+        ctx.font = "bold 18px 'Courier New', monospace";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("RESUMING IN...", canvas.width / 2, canvas.height / 2 - 60);
+    }
+
     ctx.restore();
 }
 
@@ -407,7 +456,7 @@ window.addEventListener("keydown", (e) => {
 
 // Primary UI Button Listeners
 pauseTriggerBtn.onclick = () => togglePauseState();
-document.getElementById("resume-btn").onclick = () => togglePauseState();
+document.getElementById("resume-btn").onclick = () => startResumeCountdown();
 document.getElementById("pause-exit-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
 document.getElementById("gameover-menu-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
 document.getElementById("avatar-back-btn").onclick = () => { currentGameState = "MENU"; switchUI("MENU"); };
